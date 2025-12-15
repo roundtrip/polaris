@@ -6,27 +6,19 @@ import type {TabProps} from '../../types';
 import styles from '../../Tabs.module.scss';
 
 export interface ListProps {
-  focusIndex: number;
   disclosureTabs: TabProps[];
   onClick?(id: string): void;
   onKeyPress?(event: KeyboardEvent<HTMLElement>): void;
 }
 
 export function List({
-  focusIndex,
   disclosureTabs,
   onClick = noop,
   onKeyPress = noop,
 }: ListProps) {
-  const tabs = disclosureTabs.map(({id, content, ...tabProps}, index) => {
+  const tabs = disclosureTabs.map(({id, content, ...tabProps}) => {
     return (
-      <Item
-        key={id}
-        {...tabProps}
-        id={id}
-        focused={index === focusIndex}
-        onClick={onClick.bind(null, id)}
-      >
+      <Item key={id} {...tabProps} id={id} onClick={onClick.bind(null, id)}>
         {content}
       </Item>
     );

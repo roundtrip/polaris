@@ -577,10 +577,9 @@ export const Tabs = ({
                     activator={activator}
                     active={disclosureActivatorVisible && showDisclosure}
                     onClose={handleClose}
-                    autofocusTarget="first-node"
+                    autofocusTarget="none"
                   >
                     <List
-                      focusIndex={hiddenTabs.indexOf(tabToFocus)}
                       disclosureTabs={disclosureTabs}
                       onClick={handleListTabClick}
                       onKeyPress={handleKeyPress}
