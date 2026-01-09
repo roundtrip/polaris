@@ -74,6 +74,7 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
   private contentNode = createRef<HTMLDivElement>();
   private enteringTimer?: number;
   private overlayRef: React.RefObject<PositionedOverlay>;
+  private wasMeasuring = true;
 
   constructor(props: PopoverOverlayProps) {
     super(props);
@@ -93,15 +94,13 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
 
   componentDidMount() {
     if (this.props.active) {
-      this.focusContent();
-
       this.changeTransitionStatus(TransitionStatus.Entered);
     }
   }
 
   componentDidUpdate(oldProps: PopoverOverlayProps) {
     if (this.props.active && !oldProps.active) {
-      this.focusContent();
+      this.wasMeasuring = true;
       this.changeTransitionStatus(TransitionStatus.Entering, () => {
         this.clearTransitionTimeout();
         this.enteringTimer = window.setTimeout(() => {
@@ -203,6 +202,17 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
     overlayDetails,
   ) => {
     const {measuring, desiredHeight, positioning} = overlayDetails;
+
+    // If we were measuring and now we are not, we should focus the content
+    if (this.wasMeasuring && !measuring && this.props.active) {
+      this.focusContent();
+      this.wasMeasuring = false;
+    }
+
+    // Keep track of the measuring state
+    if (measuring) {
+      this.wasMeasuring = true;
+    }
 
     const {
       id,
