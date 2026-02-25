@@ -52,6 +52,14 @@
   }
 }
 
+.DisabledFilterButton {
+  background: var(--p-color-bg-fill-disabled);
+  border-radius: var(--p-border-radius-200);
+  border-color: transparent;
+  color: var(--p-color-text-disabled);
+  cursor: default;
+}
+
 .PlainButton {
   background: none;
   color: inherit;

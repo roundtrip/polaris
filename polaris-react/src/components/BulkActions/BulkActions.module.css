@@ -76,8 +76,8 @@
   /* stylelint-disable-next-line -- needed for focus ring */
   @mixin focus-ring;
 
-  &:hover,
-  &:focus {
+  &:hover:not(.AllAction-disabled),
+  &:focus:not(.AllAction-disabled) {
     color: var(--p-color-text-emphasis-hover);
   }
 
@@ -89,4 +89,10 @@
     /* stylelint-disable-next-line -- needed for focus ring */
     @mixin focus-ring base, 0, focused;
   }
+}
+
+.AllAction-disabled {
+  color: var(--p-color-text-disabled);
+  cursor: default;
+  pointer-events: none;
 }

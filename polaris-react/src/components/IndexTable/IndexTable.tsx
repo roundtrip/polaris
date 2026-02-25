@@ -39,6 +39,7 @@ import type {
   Width,
   TooltipOverlayProps,
 } from '../Tooltip';
+import {InlineStack} from '../InlineStack';
 
 import {getTableHeadingsBySelector} from './utilities';
 import {ScrollContainer, Cell, Row} from './components';
@@ -125,6 +126,12 @@ export interface IndexTableBaseProps {
   hasZebraStriping?: boolean;
   /** Properties to enable pagination at the bottom of the table. */
   pagination?: IndexTablePaginationProps;
+  /** ROUNDTRIP: Additional text suffix for selection (e.g., for adding selected items and weight). */
+  selectedSuffix?: string;
+  /** ROUNDTRIP: Disables selection, filters, and sorting. */
+  disabled?: boolean;
+  /** ROUNDTRIP: Additional element to prefix to the header row's checkbox (used for drag and drop) */
+  checkboxPrefix?: React.ReactNode;
 }
 
 export interface TableHeadingRect {
@@ -152,6 +159,9 @@ function IndexTableBase({
   sortToggleLabels,
   hasZebraStriping,
   pagination,
+  selectedSuffix = '',
+  disabled,
+  checkboxPrefix,
   ...restProps
 }: IndexTableBaseProps) {
   const {
@@ -476,9 +486,10 @@ function IndexTableBase({
     }
   }, [selectedItemsCount, itemCount]);
 
-  const selectAllActionsLabel = i18n.translate('Polaris.IndexTable.selected', {
-    selectedItemsCount: selectedItemsCountValue,
-  });
+  const selectAllActionsLabel =
+    i18n.translate('Polaris.IndexTable.selected', {
+      selectedItemsCount: selectedItemsCountValue,
+    }) + selectedSuffix;
 
   const handleTogglePage = useCallback(() => {
     handleSelectionChange(
@@ -566,6 +577,8 @@ function IndexTableBase({
                   }
                   label={selectAllActionsLabel}
                   buttonSize="micro"
+                  disabled={disabled}
+                  checkboxPrefix={checkboxPrefix}
                 />
               </div>
             ) : null;
@@ -781,13 +794,24 @@ function IndexTableBase({
       index === 0 && styles['TableHeading-first'],
     );
 
-    const checkboxContent = (
+    let checkboxContent = renderCheckboxContent();
+
+    if (checkboxPrefix) {
+      checkboxContent = (
+        <InlineStack gap="150" wrap={false}>
+          {checkboxPrefix}
+          {checkboxContent}
+        </InlineStack>
+      );
+    }
+
+    checkboxContent = (
       <Tag
         className={checkboxClassName}
         key={`${heading}-${index}`}
         {...tagProps}
       >
-        {renderCheckboxContent()}
+        {checkboxContent}
       </Tag>
     );
 
@@ -804,6 +828,7 @@ function IndexTableBase({
           labelHidden
           onChange={handleSelectPage}
           checked={bulkSelectState}
+          disabled={disabled}
         />
       </div>
     );
@@ -843,6 +868,7 @@ function IndexTableBase({
         variant="bodySm"
         fontWeight="medium"
         visuallyHidden={heading.hidden}
+        tone={disabled ? 'disabled' : undefined}
       >
         {heading.title}
       </Text>
@@ -896,6 +922,7 @@ function IndexTableBase({
             heading?.alignment === 'end' &&
               styles['TableHeadingSortIcon-heading-align-end'],
             isCurrentlySorted && styles['TableHeadingSortIcon-visible'],
+            disabled && styles['TableHeadingSortIcon-disabled'],
           )}
         >
           <SourceComponent
@@ -927,7 +954,7 @@ function IndexTableBase({
       };
 
       const sortMarkup = (
-        <UnstyledButton {...defaultSortButtonProps}>
+        <UnstyledButton {...defaultSortButtonProps} disabled={disabled}>
           {iconMarkup}
           <span
             className={classNames(

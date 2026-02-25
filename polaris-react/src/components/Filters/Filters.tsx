@@ -181,9 +181,8 @@ export function Filters({
       filters={filters}
       appliedFilters={appliedFilters}
       onClearAll={onClearAll}
-      disabled={disabled}
+      disabled={disabled || disableFilters}
       hideQueryField={hideQueryField}
-      disableFilters={disableFilters}
       onAddFilterClick={onAddFilterClick}
       closeOnChildOverlayClick={closeOnChildOverlayClick}
       mountedStateStyles={mountedStateStyles}

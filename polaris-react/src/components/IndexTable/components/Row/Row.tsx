@@ -14,7 +14,7 @@ import type {Range} from '../../../../utilities/index-provider/types';
 import styles from '../../IndexTable.module.css';
 
 type RowType = 'data' | 'subheader' | 'child';
-type RowStatus = 'subdued' | 'success' | 'warning' | 'critical';
+type RowStatus = 'subdued' | 'success' | 'warning' | 'critical' | 'highlight';
 type TableRowElementType = HTMLTableRowElement & HTMLLIElement;
 
 export interface RowProps {
@@ -46,6 +46,11 @@ export interface RowProps {
   onNavigation?(id: string): void;
   /** Callback fired when the row is clicked. Overrides the default click behaviour. */
   onClick?(): void;
+
+  /** ROUNDTRIP: Additional props to pass to the row element (used for drag and drop) */
+  rowProps?: any;
+  /** ROUNDTRIP: Additional element to prefix to the row's checkbox (used for drag and drop) */
+  checkboxPrefix?: React.ReactNode;
 }
 
 export const Row = memo(function Row({
@@ -61,6 +66,8 @@ export const Row = memo(function Row({
   accessibilityLabel,
   onNavigation,
   onClick,
+  rowProps,
+  checkboxPrefix,
 }: RowProps) {
   const {selectable: tableIsSelectable, selectMode, condensed} = useIndexRow();
   const rowIsSelectable = tableIsSelectable && !hideSelectable;
@@ -90,8 +97,12 @@ export const Row = memo(function Row({
         selectionType = SelectionType.Range;
       }
 
+      // ROUNDTRIP: Copied from Checkbox.tsx to "round up" indeterminate to checked when clicked.
+      const isIndeterminate = selected === 'indeterminate';
+      const isChecked = !isIndeterminate && Boolean(selected);
+
       const selection: string | Range = selectionRange ?? id;
-      onSelectionChange(selectionType, !selected, selection, position);
+      onSelectionChange(selectionType, !isChecked, selection, position);
     },
     [
       id,
@@ -192,7 +203,7 @@ export const Row = memo(function Row({
   const checkboxMarkup = hideSelectable ? (
     <Cell />
   ) : (
-    <Checkbox accessibilityLabel={accessibilityLabel} />
+    <Checkbox accessibilityLabel={accessibilityLabel} prefix={checkboxPrefix} />
   );
 
   return (
@@ -206,6 +217,7 @@ export const Row = memo(function Row({
           onMouseLeave={setHoverOut}
           onClick={handleRowClick}
           ref={tableRowCallbackRef}
+          {...rowProps}
         >
           {tableIsSelectable ? checkboxMarkup : null}
           {children}

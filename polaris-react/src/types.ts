@@ -181,6 +181,11 @@ export interface PlainAction extends Action {
   plain?: boolean;
 }
 
+export interface PrimaryAction extends Action {
+  /** Should action be displayed as a primary button */
+  primary?: boolean;
+}
+
 export interface TooltipAction {
   /** Text content to render in a tooltip */
   helpText?: React.ReactNode;

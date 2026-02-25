@@ -8,16 +8,19 @@ import {RowContext} from '../../../../utilities/index-table';
 import {useIndexValue} from '../../../../utilities/index-provider';
 import {Checkbox as PolarisCheckbox} from '../../../Checkbox';
 import {setRootProperty} from '../../../../utilities/set-root-property';
+import {InlineStack} from '../../../InlineStack';
 import sharedStyles from '../../IndexTable.module.css';
 
 import styles from './Checkbox.module.css';
 
 interface CheckboxProps {
   accessibilityLabel?: string;
+  prefix?: React.ReactNode;
 }
 
 export const Checkbox = memo(function Checkbox({
   accessibilityLabel,
+  prefix,
 }: CheckboxProps) {
   const i18n = useI18n();
   const {resourceName} = useIndexValue();
@@ -29,19 +32,28 @@ export const Checkbox = memo(function Checkbox({
         resourceName: resourceName.singular,
       });
 
-  return (
-    <CheckboxWrapper>
-      <div className={styles.Wrapper} onClick={onInteraction} onKeyUp={noop}>
-        <PolarisCheckbox
-          id={`Select-${itemId}`}
-          label={label}
-          labelHidden
-          checked={selected}
-          disabled={disabled}
-        />
-      </div>
-    </CheckboxWrapper>
+  let checkbox = (
+    <div className={styles.Wrapper} onClick={onInteraction} onKeyUp={noop}>
+      <PolarisCheckbox
+        id={`Select-${itemId}`}
+        label={label}
+        labelHidden
+        checked={selected}
+        disabled={disabled}
+      />
+    </div>
   );
+
+  if (prefix) {
+    checkbox = (
+      <InlineStack gap="150" wrap={false}>
+        {prefix}
+        {checkbox}
+      </InlineStack>
+    );
+  }
+
+  return <CheckboxWrapper>{checkbox}</CheckboxWrapper>;
 });
 
 interface CheckboxWrapperProps {

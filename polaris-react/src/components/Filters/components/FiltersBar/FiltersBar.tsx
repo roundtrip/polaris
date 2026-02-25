@@ -38,8 +38,6 @@ export interface FiltersBarProps {
   disabled?: boolean;
   /** Hide the query field. */
   hideQueryField?: boolean;
-  /** Disable the filters */
-  disableFilters?: boolean;
   mountedState?: TransitionStatus;
   /** Callback when the add filter button is clicked. */
   onAddFilterClick?: () => void;
@@ -54,7 +52,6 @@ export function FiltersBar({
   onClearAll,
   disabled,
   hideQueryField,
-  disableFilters,
   mountedStateStyles,
   onAddFilterClick,
   closeOnChildOverlayClick,
@@ -171,8 +168,7 @@ export function FiltersBar({
         aria-label={i18n.translate('Polaris.Filters.addFilter')}
         disabled={
           disabled ||
-          (unsectionedFilters.length === 0 && sectionedFilters.length === 0) ||
-          disableFilters
+          (unsectionedFilters.length === 0 && sectionedFilters.length === 0)
         }
       >
         <Text as="span" variant="bodySm" tone={disabled ? 'disabled' : 'base'}>
@@ -217,7 +213,7 @@ export function FiltersBar({
           filterKey={filterKey}
           selected={appliedFilterKeys?.includes(filterKey)}
           onRemove={handleFilterPillRemove}
-          disabled={pinnedFilter.disabled || disableFilters}
+          disabled={pinnedFilter.disabled || disabled}
           closeOnChildOverlayClick={closeOnChildOverlayClick}
         />
       );
@@ -258,6 +254,7 @@ export function FiltersBar({
         size="micro"
         onClick={handleClearAllFilters}
         variant="monochromePlain"
+        disabled={disabled}
       >
         {i18n.translate('Polaris.Filters.clearFilters')}
       </Button>

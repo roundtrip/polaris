@@ -32,6 +32,11 @@
   }
 }
 
+.CheckableButton-disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
 .Checkbox {
   pointer-events: none;
 

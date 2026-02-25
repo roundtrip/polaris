@@ -48,9 +48,9 @@ describe('<Filters />', () => {
       expect(wrapper).toContainReactText(defaultProps.label);
     });
 
-    it('will return null if disabled', () => {
+    it('will not return null if disabled', () => {
       const wrapper = mountWithApp(<FilterPill {...defaultProps} disabled />);
-      expect(wrapper!.domNode).toBeNull();
+      expect(wrapper!.domNode).not.toBeNull();
     });
 
     it('will invoked the onClick prop when clicked, if present', () => {

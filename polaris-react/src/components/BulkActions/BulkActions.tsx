@@ -15,6 +15,8 @@ import type {
   ActionListSection,
   MenuGroupDescriptor,
   Action,
+  PrimaryAction,
+  LoadableAction,
 } from '../../types';
 import {ActionList} from '../ActionList';
 import {Popover} from '../Popover';
@@ -39,7 +41,10 @@ import {
 } from './utilities';
 import styles from './BulkActions.module.css';
 
-export type BulkAction = DisableableAction & BadgeAction;
+export type BulkAction = DisableableAction &
+  BadgeAction &
+  PrimaryAction &
+  LoadableAction;
 
 type BulkActionListSection = ActionListSection;
 
@@ -78,6 +83,8 @@ export interface BulkActionsProps {
   isSticky?: boolean;
   /** @deprecated The width of the BulkActions */
   width?: number;
+  /** ROUNDTRIP: Additional element to prefix to the header row's checkbox (used for drag and drop) */
+  checkboxPrefix?: React.ReactNode;
 }
 
 interface BulkActionsState {
@@ -104,6 +111,7 @@ export const BulkActions = forwardRef(function BulkActions(
     onMoreActionPopoverToggle,
     width,
     selectMode,
+    checkboxPrefix,
   }: BulkActionsProps,
   ref,
 ) {
@@ -165,9 +173,14 @@ export const BulkActions = forwardRef(function BulkActions(
           'Polaris.ResourceList.BulkActions.moreActionsActivatorLabel',
         );
 
+  const paginatedSelectAllClasses = classNames(
+    styles.AllAction,
+    disabled && styles['AllAction-disabled'],
+  );
+
   const paginatedSelectAllMarkup = paginatedSelectAllAction ? (
     <UnstyledButton
-      className={styles.AllAction}
+      className={paginatedSelectAllClasses}
       onClick={paginatedSelectAllAction.onAction}
       size="slim"
       disabled={disabled}
@@ -360,11 +373,22 @@ export const BulkActions = forwardRef(function BulkActions(
     />
   );
 
+  let checkableButtonMarkup = <CheckableButton {...checkableButtonProps} />;
+
+  if (checkboxPrefix) {
+    checkableButtonMarkup = (
+      <InlineStack gap="150" wrap={false}>
+        {checkboxPrefix}
+        {checkableButtonMarkup}
+      </InlineStack>
+    );
+  }
+
   return (
     <div className={styles.BulkActions} style={width ? {width} : undefined}>
       <InlineStack gap="400" blockAlign="center">
         <div className={styles.BulkActionsSelectAllWrapper}>
-          <CheckableButton {...checkableButtonProps} />
+          {checkableButtonMarkup}
           {paginatedSelectAllMarkup}
         </div>
         {selectMode ? (

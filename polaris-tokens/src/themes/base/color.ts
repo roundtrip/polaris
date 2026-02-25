@@ -122,7 +122,11 @@ export type ColorBackgroundAlias =
   | 'video-thumbnail-play-button-bg-fill-hover'
   | 'video-thumbnail-play-button-bg-fill'
   | 'scrollbar-thumb-bg-hover'
-  | 'scrollbar-thumb-bg';
+  | 'scrollbar-thumb-bg'
+  /** ROUNDTRIP: Special highlight color for IndexTable.Row */
+  | 'bg-surface-highlight'
+  | 'bg-surface-highlight-active'
+  | 'bg-surface-highlight-hover';
 
 export type ColorBorderAlias =
   | 'border-brand'
@@ -1216,5 +1220,14 @@ export const color: {
   },
   'color-scrollbar-thumb-bg': {
     value: colors.gray[11],
+  },
+  'color-bg-surface-highlight': {
+    value: '#fffbd7',
+  },
+  'color-bg-surface-highlight-active': {
+    value: '#fff3aa',
+  },
+  'color-bg-surface-highlight-hover': {
+    value: '#fef9c8',
   },
 };

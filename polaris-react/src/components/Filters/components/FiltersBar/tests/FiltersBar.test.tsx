@@ -280,7 +280,7 @@ describe('<FiltersBar />', () => {
     });
   });
 
-  it('will not render a disabled filter if pinned', () => {
+  it('will render a disabled filter even if pinned', () => {
     const scrollSpy = jest.fn();
     HTMLElement.prototype.scroll = scrollSpy;
     const filters = [
@@ -315,7 +315,7 @@ describe('<FiltersBar />', () => {
       ],
     });
 
-    expect(wrapper.findAll(FilterPill)[1].domNode).toBeNull();
+    expect(wrapper.findAll(FilterPill)[1].domNode).not.toBeNull();
   });
 
   it('renders filters with sections', () => {

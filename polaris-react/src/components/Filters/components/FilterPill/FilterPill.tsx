@@ -101,12 +101,14 @@ export function FilterPill({
     setPopoverActive(false);
   };
 
-  const buttonClasses = classNames(
-    styles.FilterButton,
-    selected && styles.ActiveFilterButton,
-    popoverActive && styles.FocusFilterButton,
-    focused && styles.focusedFilterButton,
-  );
+  const buttonClasses = disabled
+    ? styles.DisabledFilterButton
+    : classNames(
+        styles.FilterButton,
+        selected && styles.ActiveFilterButton,
+        popoverActive && styles.FocusFilterButton,
+        focused && styles.focusedFilterButton,
+      );
 
   const clearButtonClassNames = classNames(
     styles.PlainButton,
@@ -151,6 +153,7 @@ export function FilterPill({
       className={clearButtonClassNames}
       type="button"
       aria-label={i18n.translate('Polaris.FilterPill.clear')}
+      disabled={disabled}
     >
       <div className={styles.IconWrapper}>
         <Icon source={XSmallIcon} tone="base" />
@@ -162,6 +165,7 @@ export function FilterPill({
     <div className={buttonClasses}>
       <InlineStack gap="0" wrap={false}>
         <UnstyledButton
+          disabled={disabled}
           onFocus={setFocusedTrue}
           onBlur={setFocusedFalse}
           onClick={togglePopoverActive}
@@ -198,9 +202,10 @@ export function FilterPill({
     </div>
   );
 
-  if (disabled) {
-    return null;
-  }
+  // ROUNDTRIP: we prefer visually disabled filters as opposed to hiding them.
+  // if (disabled) {
+  //   return null;
+  // }
 
   return (
     <div ref={elementRef}>
