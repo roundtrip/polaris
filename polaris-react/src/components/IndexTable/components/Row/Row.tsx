@@ -201,7 +201,7 @@ export const Row = memo(function Row({
 
   const RowWrapper = condensed ? 'li' : 'tr';
   const checkboxMarkup = hideSelectable ? (
-    <Cell />
+    <Cell className={styles['TableCell-first']} />
   ) : (
     <Checkbox accessibilityLabel={accessibilityLabel} prefix={checkboxPrefix} />
   );
