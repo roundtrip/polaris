@@ -8,13 +8,12 @@ import type {IndexTableProps} from '../../../IndexTable';
 import {RowHoveredContext} from '../../../../../utilities/index-table';
 import {SelectionType} from '../../../../../utilities/index-provider';
 import {Row} from '../Row';
-import {Checkbox} from '../../Checkbox';
+import {Checkbox, CheckboxWrapper} from '../../Checkbox';
 import {Button} from '../../../../Button';
 import {Link} from '../../../../Link';
 import {Checkbox as PolarisCheckbox} from '../../../../Checkbox';
 import styles from '../../../IndexTable.module.css';
 import type {Range} from '../../../../../utilities/index-provider';
-import {Cell} from '../../Cell';
 
 const defaultEvent = {
   preventDefault: noop,
@@ -99,7 +98,7 @@ describe('<Row />', () => {
     );
 
     expect(row).not.toContainReactComponent(Checkbox);
-    expect(row).toContainReactComponent(Cell, {});
+    expect(row).toContainReactComponent(CheckboxWrapper, {});
   });
 
   it('renders a RowHoveredContext provider', () => {

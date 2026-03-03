@@ -6,8 +6,7 @@ import {
   SelectionType,
   useIndexSelectionChange,
 } from '../../../../utilities/index-provider';
-import {Cell} from '../Cell';
-import {Checkbox} from '../Checkbox';
+import {Checkbox, CheckboxWrapper} from '../Checkbox';
 import {classNames, variationName} from '../../../../utilities/css';
 import {RowContext, RowHoveredContext} from '../../../../utilities/index-table';
 import type {Range} from '../../../../utilities/index-provider/types';
@@ -199,9 +198,11 @@ export const Row = memo(function Row({
     };
   }
 
+  // ROUNDTRIP: Use CheckboxWrapper instead of Cell to handle case where first row
+  // is unselectable so we set --pc-checkbox-offset.
   const RowWrapper = condensed ? 'li' : 'tr';
   const checkboxMarkup = hideSelectable ? (
-    <Cell className={styles['TableCell-first']} />
+    <CheckboxWrapper />
   ) : (
     <Checkbox accessibilityLabel={accessibilityLabel} prefix={checkboxPrefix} />
   );

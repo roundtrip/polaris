@@ -57,7 +57,7 @@ export const Checkbox = memo(function Checkbox({
 });
 
 interface CheckboxWrapperProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export function CheckboxWrapper({children}: CheckboxWrapperProps) {
