@@ -262,11 +262,15 @@ export class PopoverOverlay extends PureComponent<PopoverOverlayProps, State> {
       <div className={className} {...overlay.props}>
         <EventListener
           event="click"
+          // ROUNDTRIP: capture event to work around IndexTable.Row click handler
+          capture
           handler={this.handleClick}
           window={window}
         />
         <EventListener
           event="touchstart"
+          // ROUNDTRIP: capture event to work around IndexTable.Row click handler
+          capture
           handler={this.handleClick}
           window={window}
         />
