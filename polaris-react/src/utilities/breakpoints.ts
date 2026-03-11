@@ -63,9 +63,15 @@ const breakpointsQueryEntries = getBreakpointsQueryEntries(
   themeDefault.breakpoints,
 );
 
+// Cache the results of window.matchMedia() as it is expensive to call
+// and the results are stable during React effect processing.
+let cachedBreakpointsMatches: BreakpointsMatches | null = null;
+
 if (!isServer) {
   breakpointsQueryEntries.forEach(([breakpointAlias, query]) => {
     const eventListener = (event: {matches: boolean}) => {
+      cachedBreakpointsMatches = null;
+
       for (const hookCallback of hookCallbacks) {
         hookCallback(breakpointAlias, event.matches);
       }
@@ -91,12 +97,22 @@ function getDefaultMatches(defaults?: UseBreakpointsOptions['defaults']) {
 }
 
 function getLiveMatches() {
-  return Object.fromEntries(
+  if (cachedBreakpointsMatches) {
+    return cachedBreakpointsMatches;
+  }
+
+  const matches = Object.fromEntries(
     breakpointsQueryEntries.map(([directionAlias, query]) => [
       directionAlias,
       window.matchMedia(query).matches,
     ]),
   ) as BreakpointsMatches;
+
+  if (process.env.NODE_ENV !== 'test') {
+    cachedBreakpointsMatches = matches;
+  }
+
+  return matches;
 }
 
 export interface UseBreakpointsOptions {
