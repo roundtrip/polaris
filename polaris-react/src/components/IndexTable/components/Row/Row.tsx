@@ -50,6 +50,8 @@ export interface RowProps {
   rowProps?: any;
   /** ROUNDTRIP: Additional element to prefix to the row's checkbox (used for drag and drop) */
   checkboxPrefix?: React.ReactNode;
+  /** ROUNDTRIP: Additional element to suffix to the row's checkbox (used for icons) */
+  checkboxSuffix?: React.ReactNode;
 }
 
 export const Row = memo(function Row({
@@ -67,6 +69,7 @@ export const Row = memo(function Row({
   onClick,
   rowProps,
   checkboxPrefix,
+  checkboxSuffix,
 }: RowProps) {
   const {selectable: tableIsSelectable, selectMode, condensed} = useIndexRow();
   const rowIsSelectable = tableIsSelectable && !hideSelectable;
@@ -204,7 +207,11 @@ export const Row = memo(function Row({
   const checkboxMarkup = hideSelectable ? (
     <CheckboxWrapper />
   ) : (
-    <Checkbox accessibilityLabel={accessibilityLabel} prefix={checkboxPrefix} />
+    <Checkbox
+      accessibilityLabel={accessibilityLabel}
+      prefix={checkboxPrefix}
+      suffix={checkboxSuffix}
+    />
   );
 
   return (

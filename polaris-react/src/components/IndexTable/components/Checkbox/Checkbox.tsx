@@ -16,11 +16,13 @@ import styles from './Checkbox.module.css';
 interface CheckboxProps {
   accessibilityLabel?: string;
   prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 export const Checkbox = memo(function Checkbox({
   accessibilityLabel,
   prefix,
+  suffix,
 }: CheckboxProps) {
   const i18n = useI18n();
   const {resourceName} = useIndexValue();
@@ -44,11 +46,12 @@ export const Checkbox = memo(function Checkbox({
     </div>
   );
 
-  if (prefix) {
+  if (prefix || suffix) {
     checkbox = (
       <InlineStack gap="150" wrap={false}>
         {prefix}
         {checkbox}
+        {suffix}
       </InlineStack>
     );
   }
