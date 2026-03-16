@@ -68,7 +68,6 @@ interface State {
   globalRibbonHeight: number;
   loadingStack: number;
   toastMessages: ToastPropsWithID[];
-  showContextualSaveBar: boolean;
   scrollbarAlwaysVisible: boolean;
 }
 
@@ -83,7 +82,6 @@ class FrameInner extends PureComponent<CombinedProps, State> {
     globalRibbonHeight: 0,
     loadingStack: 0,
     toastMessages: [],
-    showContextualSaveBar: false,
     scrollbarAlwaysVisible: false,
   };
 
@@ -109,8 +107,7 @@ class FrameInner extends PureComponent<CombinedProps, State> {
   }
 
   render() {
-    const {skipFocused, loadingStack, toastMessages, showContextualSaveBar} =
-      this.state;
+    const {skipFocused, loadingStack, toastMessages} = this.state;
     const {
       logo,
       children,
@@ -252,7 +249,7 @@ class FrameInner extends PureComponent<CombinedProps, State> {
 
     const contextualSaveBarMarkup = (
       <CSSAnimation
-        in={showContextualSaveBar}
+        in={this.contextualSaveBar !== null}
         className={styles.ContextualSaveBar}
         type="fade"
       >
@@ -280,8 +277,6 @@ class FrameInner extends PureComponent<CombinedProps, State> {
       stopLoading: this.stopLoading,
       setContextualSaveBar: this.setContextualSaveBar,
       removeContextualSaveBar: this.removeContextualSaveBar,
-      contextualSaveBarVisible: this.state.showContextualSaveBar,
-      contextualSaveBarProps: this.contextualSaveBar,
     };
 
     return (
@@ -367,18 +362,13 @@ class FrameInner extends PureComponent<CombinedProps, State> {
   };
 
   private setContextualSaveBar = (props: ContextualSaveBarProps) => {
-    const {showContextualSaveBar} = this.state;
     this.contextualSaveBar = {...props};
-    if (showContextualSaveBar === true) {
-      this.forceUpdate();
-    } else {
-      this.setState({showContextualSaveBar: true});
-    }
+    this.forceUpdate();
   };
 
   private removeContextualSaveBar = () => {
     this.contextualSaveBar = null;
-    this.setState({showContextualSaveBar: false});
+    this.forceUpdate();
   };
 
   private startLoading = () => {
