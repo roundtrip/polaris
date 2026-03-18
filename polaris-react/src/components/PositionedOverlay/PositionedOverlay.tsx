@@ -276,7 +276,7 @@ export class PositionedOverlay extends PureComponent<
           : this.firstScrollableContainer;
         const scrollableContainerRect = getRectForNode(scrollableElement);
 
-        const overlayRect =
+        const initialOverlayRect =
           fullWidth || preferredPosition === 'cover'
             ? new Rect({...currentOverlayRect, width: activatorRect.width})
             : currentOverlayRect;
@@ -297,16 +297,54 @@ export class PositionedOverlay extends PureComponent<
         let overlayMargins = {activator: 0, container: 0, horizontal: 0};
 
         if (this.overlay.firstElementChild) {
-          const nodeMargins = getMarginsForNode(
+          overlayMargins = getMarginsForNode(
             this.overlay.firstElementChild as HTMLElement,
           );
-          overlayMargins = nodeMargins;
         }
 
         const containerRect = windowRect(activator);
         const zIndexForLayer = getZIndexForLayerFromNode(activator);
         const zIndex =
           zIndexForLayer == null ? zIndexForLayer : zIndexForLayer + 1;
+
+        // Calculate horizontal position first using the initial overlay width
+        const horizontalPosition = calculateHorizontalPosition(
+          activatorRect,
+          initialOverlayRect,
+          containerRect,
+          overlayMargins,
+          preferredAlignment,
+        );
+
+        // Apply horizontal position to the DOM before measuring height.
+        // The overlay's shrink-to-fit width depends on its left/right position,
+        // which can cause text to wrap differently than during the initial
+        // measurement (when left may be undefined). Setting the position first
+        // ensures the height measurement reflects the actual text wrapping.
+        if (this.overlay) {
+          if (preferredAlignment !== 'right') {
+            this.overlay.style.left = `${horizontalPosition}px`;
+            this.overlay.style.right = '';
+          } else {
+            this.overlay.style.right = `${horizontalPosition}px`;
+            this.overlay.style.left = '';
+          }
+        }
+
+        // Re-measure overlay at correct horizontal position
+        const positionedOverlayRect = getRectForNode(this.overlay);
+        const overlayRect =
+          fullWidth || preferredPosition === 'cover'
+            ? new Rect({...positionedOverlayRect, width: activatorRect.width})
+            : positionedOverlayRect;
+
+        // Re-read margins in case they changed
+        if (this.overlay.firstElementChild) {
+          overlayMargins = getMarginsForNode(
+            this.overlay.firstElementChild as HTMLElement,
+          );
+        }
+
         const verticalPosition = calculateVerticalPosition(
           activatorRect,
           overlayRect,
@@ -316,13 +354,6 @@ export class PositionedOverlay extends PureComponent<
           preferredPosition,
           fixed,
           topBarOffset,
-        );
-        const horizontalPosition = calculateHorizontalPosition(
-          activatorRect,
-          overlayRect,
-          containerRect,
-          overlayMargins,
-          preferredAlignment,
         );
 
         const chevronOffset =
