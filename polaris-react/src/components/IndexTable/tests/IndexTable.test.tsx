@@ -84,6 +84,13 @@ describe('<IndexTable>', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    // Re-mock after resetAllMocks clears the global beforeEach mock
+    // eslint-disable-next-line jest/prefer-spy-on
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+    }));
     (getTableHeadingsBySelector as jest.Mock).mockReturnValue([]);
   });
 

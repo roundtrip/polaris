@@ -188,7 +188,8 @@ function IndexTableBase({
   const tableHeadingRects = useRef<TableHeadingRect[]>([]);
 
   const scrollableContainerElement = useRef<HTMLDivElement>(null);
-  const tableElement = useRef<HTMLTableElement>(null);
+  const tableElement = useRef<HTMLTableElement | null>(null);
+  const tableResizeObserver = useRef<ResizeObserver | null>(null);
   const tableBodyElement = useRef<Element | null>(null);
   const condensedListElement = useRef<HTMLUListElement>(null);
 
@@ -386,6 +387,27 @@ function IndexTableBase({
     handleCanScrollRight,
     handleCanFitStickyColumn,
   ]);
+
+  const tableRef = useCallback(
+    (node: HTMLTableElement | null) => {
+      if (tableResizeObserver.current) {
+        tableResizeObserver.current.disconnect();
+        tableResizeObserver.current = null;
+      }
+
+      tableElement.current = node;
+
+      if (node !== null && !condensed) {
+        const observer = new ResizeObserver(handleResize);
+        observer.observe(node);
+        tableResizeObserver.current = observer;
+
+        handleResize();
+        setStickyWrapper(node);
+      }
+    },
+    [condensed, handleResize],
+  );
 
   const handleScrollContainerScroll = useCallback(
     (canScrollLeft: boolean, canScrollRight: boolean) => {
@@ -707,7 +729,7 @@ function IndexTableBase({
         scrollableContainerRef={scrollableContainerElement}
         onScroll={handleScrollContainerScroll}
       >
-        <table ref={tableElement} className={tableClassNames}>
+        <table ref={tableRef} className={tableClassNames}>
           <thead>
             <tr className={styles.HeadingRow}>{headingsMarkup}</tr>
           </thead>
