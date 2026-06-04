@@ -16,9 +16,16 @@ import {Portal} from '../Portal';
 import {Dialog, Footer, Header, Section} from './components';
 import type {FooterProps} from './components';
 import styles from './Modal.module.css';
+import {useBreakpoints} from '../../utilities/breakpoints';
 
 const IFRAME_LOADING_HEIGHT = 200;
 const DEFAULT_IFRAME_CONTENT_HEIGHT = 400;
+
+// ROUNDTRIP: Detect if the user agent is the shopify mobile app.
+// See EAS-6184
+const IS_SHOPIFY_MOBILE =
+  typeof navigator !== 'undefined' &&
+  navigator.userAgent.indexOf('Shopify Mobile') >= 0;
 
 export type ModalSize = 'small' | 'large' | 'fullScreen';
 
@@ -103,6 +110,8 @@ export const Modal: React.FunctionComponent<ModalProps> & {
   const i18n = useI18n();
   const iframeTitle = i18n.translate('Polaris.Modal.iFrameTitle');
 
+  const {mdDown} = useBreakpoints();
+
   let dialog: React.ReactNode;
   let backdrop: React.ReactNode;
 
@@ -146,12 +155,16 @@ export const Modal: React.FunctionComponent<ModalProps> & {
   if (open) {
     const footerMarkup =
       !footer && !primaryAction && !secondaryActions ? null : (
-        <Footer
-          primaryAction={primaryAction}
-          secondaryActions={secondaryActions}
-        >
-          {footer}
-        </Footer>
+        // ROUNDTRIP: If shopify mobile app and on mobile apply padding to clear their button bar.
+        // See EAS-6184
+        <Box paddingBlockEnd={IS_SHOPIFY_MOBILE && mdDown ? '2400' : undefined}>
+          <Footer
+            primaryAction={primaryAction}
+            secondaryActions={secondaryActions}
+          >
+            {footer}
+          </Footer>
+        </Box>
       );
 
     const content = sectioned
